@@ -54,6 +54,14 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const shortURL = req.params.shortURL;
+  console.log('delete /urls/:shortURL')
+  delete urlDatabase[shortURL]
+  const templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);
+});
+
 app.get("*", (req, res) => {
   const templateVars = { greeting: '404! Page not found' };
   res.status(404)
@@ -64,7 +72,6 @@ app.get("*", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
 
 
 
