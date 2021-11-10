@@ -84,6 +84,11 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect('/urls');
 });
 
+app.get("/register", (req, res) => {
+  console.log('/urls/register');
+  res.render("urls_register");
+});
+
 app.post("/login", (req, res) => {
   console.log('/login');
   const login = req.body.Username
