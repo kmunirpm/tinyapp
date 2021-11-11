@@ -14,6 +14,19 @@ app.set("view engine", "ejs");
 //   name: ''
 // }));
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "u1@e.com", 
+    password: "123"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "u2@e.com", 
+    password: "456"
+  }
+}
+
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -89,6 +102,32 @@ app.get("/register", (req, res) => {
   res.render("urls_register");
 });
 
+app.post("/register", (req, res) => {
+  console.log('/urls/register/post');
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if (!email || !password) {
+    return res.status(400).send('E-Mail and/or Password cannot be blank!');
+  }
+
+  const user = findUserByEmail(email);
+
+  if (user) {
+    return res.status(400).send(`${email} is already in use!`);
+  }
+
+  const id = generateRandomString();
+
+  users[id] = {
+    id, 
+    email,
+    password,
+  }
+  console.log(users)
+  res.redirect('/')
+});
+
 app.post("/login", (req, res) => {
   console.log('/login');
   const login = req.body.Username
@@ -112,12 +151,12 @@ app.get("*", (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Tinyapp listening on port ${PORT}!`);
 });
 
 
 
-function generateRandomString() {
+const generateRandomString = function () {
   charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var randomString = '';
     for (var i = 0; i < 6; i++) {
@@ -125,4 +164,15 @@ function generateRandomString() {
         randomString += charSet.substring(randomPoz,randomPoz+1);
     }
     return randomString;
+}
+
+
+const findUserByEmail = (email) => {
+  for (const userId in users) {
+    const user = users[userId];
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
 }
