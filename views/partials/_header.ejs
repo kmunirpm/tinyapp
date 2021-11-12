@@ -12,13 +12,15 @@
     </div>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <% if(typeof username == 'undefined') { %>
+        <%- console.log("userId=", typeof userId) %>
+        
+        <% if(typeof userId == 'undefined') { %>
           <a class="nav-item nav-link" href="/register">Register</a>
           <a class="nav-item nav-link" href="/login">Login</a>
         <% } else { %> 
           <form class="form-inline" action="/logout" method="POST">
             <div class="form-group mb-2">
-              Logged In As <%= username %>!&nbsp;&nbsp;<button type="submit" class="btn btn-primary">Logout</button>
+              Logged In As <%= userId %>!&nbsp;&nbsp;<button type="submit" class="btn btn-primary">Logout</button>
             </div>
           </form>
         <% } %>

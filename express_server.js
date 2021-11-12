@@ -34,15 +34,13 @@ const urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.send("Welcome! This is TinyApp.");
 });
 
 app.get("/urls", (req, res) => {
   console.log('/urls')
   const shortURL = req.params.shortURL;
-  console.log('Cookies: ', req.cookies)
-  console.log(req.cookies["username"])
-  const templateVars = { urls: urlDatabase,  username: req.cookies["username"] };
+  const templateVars = { urls: urlDatabase,  userId: req.cookies["userId"] };
   res.render("urls_index", templateVars);
 });
 
@@ -58,7 +56,7 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   console.log('urls/new')
-  const templateVars = { username: req.cookies["username"]};
+  const templateVars = { id: req.cookies["id"]};
   res.render("urls_new", templateVars);
 });
 
@@ -80,7 +78,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.post("/urls/:shortURL", (req, res) => {
   console.log('/urls/:shortURL')
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"]};
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], id: req.cookies["id"]};
   res.render("urls_edit", templateVars);
 });
 
@@ -125,20 +123,43 @@ app.post("/register", (req, res) => {
     password,
   }
   console.log(users)
-  res.redirect('/')
+  res.redirect('/login')
 });
 
 app.post("/login", (req, res) => {
   console.log('/login');
-  const login = req.body.Username
-  res.cookie('username', login)
+  const login = req.body.id
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if(!email || !password){
+    return res.status(400).send('E-Mail and Password cannot be blank!');
+  }
+
+  const user = findUserByEmail(email);
+
+  if (!user) {
+    return res.status(403).send(`No user with ${email} found`)
+  }
+
+  if (user.password !== password) {
+    return res.status(403).send(`Password does not match ${email}'s saved password'`)
+  }
+
+  res.cookie('userId', user.id);
+
   res.redirect('/urls');
+});
+
+app.get("/login", (req, res) => {
+  console.log('/urls/login');
+  res.render("urls_login");
 });
 
 app.post('/logout', (req, res) => {
   console.log('/logout');
   req.cookie = null;
-  res.clearCookie("username");
+  res.clearCookie("userId");
   console.log(req.cookie)
   res.redirect('/urls');
 });
