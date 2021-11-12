@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser")
+const bcrypt = require('bcryptjs');
 
 app.use(cookieParser())
 
@@ -10,20 +11,22 @@ app.use(bodyParser.urlencoded({extended: false})); //handles just primitive data
 app.use(bodyParser.urlencoded({extended: true})); // handles every data type
 app.set("view engine", "ejs");
 
-// app.use(cookieSession({
-//   name: ''
-// }));d
-
+// const password = "purple-monkey-dinosaur"; // found in the req.params object
+// const hashedPassword = '$2a$10$zvydM7w/H5XX4R8YdEBkR.jDLBgb1zl2snS.IqtosQZXjZIS5ZuVy';
+// console.log(bcrypt.hashSync('456',10));
+// console.log(bcrypt.compareSync("123", hashedPassword)); // returns true
+// console.log(bcrypt.compareSync("456", hashedPassword)); // returns false
+// return;
 const users = { 
   "u1ID": {
     id: "u1ID", 
     email: "u1@e.com", 
-    password: "123"
+    password: '$2a$10$zvydM7w/H5XX4R8YdEBkR.jDLBgb1zl2snS.IqtosQZXjZIS5ZuVy'
   },
  "u2ID": {
     id: "u2ID", 
     email: "u2@e.com", 
-    password: "456"
+    password: '$2a$10$4jvZjgbNwTRNDlH39EuNneIM/RYZ6YwkogLfM6CgQSKORvqgJ7jMO'
   }
 }
 
@@ -130,7 +133,7 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => {
   console.log('/urls/register/post');
   const email = req.body.email;
-  const password = req.body.password;
+  const password = bcrypt.hashSync(req.body.password);
   const val = validateCredentialsFields(email, password, "register");
   if (val[0] === false)
     return res.status(val[1]).send(val[2]);
@@ -151,11 +154,10 @@ app.post("/login", (req, res) => {
   const login = req.body.id
   const email = req.body.email;
   const password = req.body.password;
-
   const val = validateCredentialsFields(email, password, "login");
   if (val[0] === false)
     return res.status(val[1]).send(val[2]);
-
+  
   res.cookie('userId', val.id);
 
   res.redirect('/urls');
@@ -240,9 +242,9 @@ const validateCredentialsFields = (email, password, functionality) =>
   else if (user && functionality === "register") {
     return [err, code, msg] = [false, 400, `${email} is already in use!`];
   }
-
+console.log(password, user.password)
   if (functionality === "login") {
-    if (user.password !== password) {
+    if (!bcrypt.compareSync(password, user.password)) {
       return [err, code, msg] = [false, 403, `Password does not match ${email}'s saved password`];
     }
   }
