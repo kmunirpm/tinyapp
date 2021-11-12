@@ -14,6 +14,18 @@ app.set("view engine", "ejs");
 //   name: ''
 // }));
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "u1@e.com", 
+    password: "123"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "u2@e.com", 
+    password: "456"
+  }
+}
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -21,15 +33,13 @@ const urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.send("Welcome! This is TinyApp.");
 });
 
 app.get("/urls", (req, res) => {
   console.log('/urls')
   const shortURL = req.params.shortURL;
-  console.log('Cookies: ', req.cookies)
-  console.log(req.cookies["username"])
-  const templateVars = { urls: urlDatabase,  username: req.cookies["username"] };
+  const templateVars = { urls: urlDatabase,  userId: req.cookies["userId"] };
   res.render("urls_index", templateVars);
 });
 
@@ -45,7 +55,7 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   console.log('urls/new')
-  const templateVars = { username: req.cookies["username"]};
+  const templateVars = { id: req.cookies["id"]};
   res.render("urls_new", templateVars);
 });
 
@@ -67,7 +77,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.post("/urls/:shortURL", (req, res) => {
   console.log('/urls/:shortURL')
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"]};
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], id: req.cookies["id"]};
   res.render("urls_edit", templateVars);
 });
 
@@ -84,17 +94,71 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect('/urls');
 });
 
+app.get("/register", (req, res) => {
+  console.log('/urls/register');
+  res.render("urls_register");
+});
+
+app.post("/register", (req, res) => {
+  console.log('/urls/register/post');
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if (!email || !password) {
+    return res.status(400).send('E-Mail and/or Password cannot be blank!');
+  }
+
+  const user = findUserByEmail(email);
+
+  if (user) {
+    return res.status(400).send(`${email} is already in use!`);
+  }
+
+  const id = generateRandomString();
+
+  users[id] = {
+    id, 
+    email,
+    password,
+  }
+  console.log(users)
+  res.redirect('/login')
+});
+
 app.post("/login", (req, res) => {
   console.log('/login');
-  const login = req.body.Username
-  res.cookie('username', login)
+  const login = req.body.id
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if(!email || !password){
+    return res.status(400).send('E-Mail and Password cannot be blank!');
+  }
+
+  const user = findUserByEmail(email);
+
+  if (!user) {
+    return res.status(403).send(`No user with ${email} found`)
+  }
+
+  if (user.password !== password) {
+    return res.status(403).send(`Password does not match ${email}'s saved password'`)
+  }
+
+  res.cookie('userId', user.id);
+
   res.redirect('/urls');
+});
+
+app.get("/login", (req, res) => {
+  console.log('/urls/login');
+  res.render("urls_login");
 });
 
 app.post('/logout', (req, res) => {
   console.log('/logout');
   req.cookie = null;
-  res.clearCookie("username");
+  res.clearCookie("userId");
   console.log(req.cookie)
   res.redirect('/urls');
 });
@@ -107,12 +171,12 @@ app.get("*", (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Tinyapp listening on port ${PORT}!`);
 });
 
 
 
-function generateRandomString() {
+const generateRandomString = function () {
   charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var randomString = '';
     for (var i = 0; i < 6; i++) {
@@ -120,4 +184,15 @@ function generateRandomString() {
         randomString += charSet.substring(randomPoz,randomPoz+1);
     }
     return randomString;
+}
+
+
+const findUserByEmail = (email) => {
+  for (const userId in users) {
+    const user = users[userId];
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
 }
