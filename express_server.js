@@ -5,8 +5,8 @@ const bodyParser = require("body-parser");
 const bcrypt = require('bcryptjs');
 const cookieSession = require('cookie-session');
 const {users, urlDatabase} = require('./helpers/userDB');
-const {urlsForUser, validateCredentialsFields, validateAction, generateRandomString, userLoggedIn} = require('./helpers/userHelper');
-
+const generateUserHelpers = require('./helpers/userHelper');
+const {urlsForUser, validateCredentialsFields, validateAction, generateRandomString, userLoggedIn} = generateUserHelpers(users, urlDatabase);
 
 
 app.use(cookieSession({
@@ -31,7 +31,7 @@ app.get("/urls", (req, res) => {
     return res.redirect('/login');
   const uid = req.session.user_id;
   const shortURL = req.params.shortURL;
-  const templateVars = { urls: urlsForUser(urlDatabase, uid),  userId: uid};
+  const templateVars = { urls: urlsForUser(uid),  userId: uid};
   console.log(templateVars)
   res.render("urls_index", templateVars);
 });
@@ -88,7 +88,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   if(!userLoggedIn(req.session))
     return res.redirect('/login');
   const shortURL = req.params.shortURL;
-  const valUser = validateAction(urlDatabase, shortURL,req.session.user_id)
+  const valUser = validateAction(shortURL,req.session.user_id)
   if( valUser[0] === false)
     return res.status(valUser[1]).send(valUser[2]);
   delete urlDatabase[shortURL]
