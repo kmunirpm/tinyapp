@@ -1,0 +1,38 @@
+const users = { 
+  "u1ID": {
+    id: "u1ID", 
+    email: "u1@e.com", 
+    password: '$2a$10$zvydM7w/H5XX4R8YdEBkR.jDLBgb1zl2snS.IqtosQZXjZIS5ZuVy'
+  },
+ "u2ID": {
+    id: "u2ID", 
+    email: "u2@e.com", 
+    password: '$2a$10$4jvZjgbNwTRNDlH39EuNneIM/RYZ6YwkogLfM6CgQSKORvqgJ7jMO'
+  }
+};
+
+const urlDatabase = {
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "u1ID"
+  },
+  b2xVn2: {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "u1ID"
+  },
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    userID: "u1ID"
+  },
+  i3BoGr: {
+      longURL: "https://www.google.ca",
+      userID: "u1ID"
+  },
+  a4kk3d: {
+      longURL: "https://www.wikipedia.com",
+      userID: "u2ID"
+  }
+};
+
+
+module.exports = {users, urlDatabase};
