@@ -80,8 +80,13 @@ const generateUserHelpers = (users, urlDatabase) => {
     return true;
   }
 
-  return {urlsForUser, validateCredentialsFields, validateAction, generateRandomString, userLoggedIn};
+  const user = findUserByEmail("user@example.com")
+console.log(user);
+
+  return {urlsForUser, findUserByEmail, validateCredentialsFields, validateAction, generateRandomString, userLoggedIn};
 }
 
 
 module.exports = generateUserHelpers;
+
+generateUserHelpers()
