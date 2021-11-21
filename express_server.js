@@ -63,7 +63,6 @@ app.get("/urls/:shortURL", (req, res) => {
   if(!userLoggedIn(req.session.user_id))
     return res.redirect('/login');
   const val = validateAction(shrtUrl, UID);
-  console.log(val)
   if (val[0] === false)
     return res.status(val[1]).send(val[2]);
   const templateVars = { shortURL: shrtUrl, longURL: urlDatabase[shrtUrl].longURL, userId: users[UID].email};
