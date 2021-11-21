@@ -29,9 +29,7 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   if(!userLoggedIn(req.session.user_id))
     return res.redirect('/login');
-  const uid = req.session.user_id;
-  const shortURL = req.params.shortURL;
-  const templateVars = { urls: urlsForUser(uid),  userId: uid};
+  const templateVars = { urls: urlsForUser(req.session.user_id),  userId: users[req.session.user_id].email};
   res.render("urls_index", templateVars);
 });
 
@@ -39,7 +37,7 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   if(!userLoggedIn(req.session.user_id))
     return res.redirect('/login');
-  const templateVars = { userId: req.session.user_id};
+  const templateVars = { userId: users[req.session.user_id].email};
   res.render("urls_new", templateVars);
 });
 
@@ -60,9 +58,15 @@ app.post("/urls", (req, res) => {
 
 //View the page for selected shorturl
 app.get("/urls/:shortURL", (req, res) => {
+  const shrtUrl = req.params.shortURL;
+  const UID = req.session.user_id;
   if(!userLoggedIn(req.session.user_id))
     return res.redirect('/login');
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, userId: req.session.user_id};
+  const val = validateAction(shrtUrl, UID);
+  console.log(val)
+  if (val[0] === false)
+    return res.status(val[1]).send(val[2]);
+  const templateVars = { shortURL: shrtUrl, longURL: urlDatabase[shrtUrl].longURL, userId: users[UID].email};
   res.render("urls_show", templateVars);
 });
 
@@ -70,7 +74,7 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get("/urls/:shortURL/edit", (req, res) => {
   if(!userLoggedIn(req.session.user_id))
     return res.redirect('/login');
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, userId: req.session.user_id};
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, userId: users[req.session.user_id].email};
   res.render("urls_edit", templateVars);
 });
 

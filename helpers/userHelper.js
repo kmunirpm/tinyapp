@@ -1,15 +1,20 @@
 const bcrypt = require('bcryptjs');
 
 const generateUserHelpers = (users, urlDatabase) => {
+
+  //validates users actions
   const validateAction = (urlid, userId) => {
+    console.log(urlid, userId)
     if(typeof userId === "undefined" || userId === "")
       return [err, code, msg] = [false, 400, "Login required."];
-    if (urlDatabase[urlid].userID !== userId)
-      return [err, code, msg] = [false, 407, "Action not allowed."]; 
-      //console.log(urlid,userId);
+    if (typeof urlDatabase[urlid] === "undefined") {
+      return [err, code, msg] = [false, 403, `Sorry! ${urlid} short URL is an invalid URL.`];
+    }
+    else if (urlDatabase[urlid].userID !== userId) {
+      return [err, code, msg] = [false, 403, `Sorry! ${urlid} short URL does not belong to you.`];
+    }
     return [] = [true];
   }
-
 
   const validateCredentialsFields = (users, email, password, functionality) => 
   {
@@ -42,14 +47,12 @@ const generateUserHelpers = (users, urlDatabase) => {
     let userDb = {}, url;
     for (let urlId in urlDatabase) {
       url = urlDatabase[urlId];
-      //console.log("Filtering: ", url)
       if (url.userID === id) {
         userDb[urlId] = urlDatabase[urlId].longURL;
       }
     }
     return userDb;
   }
-
 
 
   const generateRandomString = function () {
@@ -73,11 +76,16 @@ const generateUserHelpers = (users, urlDatabase) => {
     return null;
   }
 
+  const findUserByID = (ID) => {
+    if(typeof ID !== "undefined" && typeof users[ID] !== "undefined")
+      return true
+    return false;
+  }
+
 
   const userLoggedIn = (session) => {
-    if(typeof session === "undefined" || session == "")
+    if(typeof session == "undefined" || session == "" || !findUserByID(session))
         return false;
-    console.log('wrong');
     return true;
   }
 
