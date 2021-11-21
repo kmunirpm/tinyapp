@@ -18,7 +18,7 @@ TinyApp is a full stack web application built with Node and Express that allows 
 - Browse to the download directory (`cd <destination directory>`)
 - Install all dependencies (using the `npm install` command).
 - Run the web server using the `npm start` command.
-- TinyApp server listens at port 8080, open your browser and access the URL [I'm an inline-style link](http://localhost:8080/).
+- TinyApp server listens at port 8080, open your browser and access the URL [http://localhost:8080/](http://localhost:8080/).
 
 ## Testing the Code
 
