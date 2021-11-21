@@ -21,3 +21,9 @@ TinyApp is a full stack web application built with Node and Express that allows 
 - It has two existing users u1@e.com and u2@e.com
 - Password for u1@e.com is 123
 - Password for u2@e.com is 456
+
+##Screenshots
+
+https://github.com/kmunirpm/tinyapp/blob/main/screenshots/main.png
+https://github.com/kmunirpm/tinyapp/blob/main/screenshots/logged-in.png
+https://github.com/kmunirpm/tinyapp/blob/main/screenshots/edit-screen.png
