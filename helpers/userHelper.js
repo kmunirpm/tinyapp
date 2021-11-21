@@ -16,6 +16,7 @@ const generateUserHelpers = (users, urlDatabase) => {
     return [] = [true];
   }
 
+  //valiadates user authentication and new user registration
   const validateCredentialsFields = (users, email, password, functionality) => 
   {
     if (email === '' || password === '') {
@@ -54,7 +55,7 @@ const generateUserHelpers = (users, urlDatabase) => {
     return userDb;
   }
 
-
+  //generates random strings for new users & new urls
   const generateRandomString = function () {
     charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       var randomString = '';
@@ -76,13 +77,14 @@ const generateUserHelpers = (users, urlDatabase) => {
     return null;
   }
 
+  //to ensure that once server restarts all previous sessions become invalid 
   const findUserByID = (ID) => {
     if(typeof ID !== "undefined" && typeof users[ID] !== "undefined")
       return true
     return false;
   }
 
-
+  //validates if user is logged in.
   const userLoggedIn = (session) => {
     if(typeof session == "undefined" || session == "" || !findUserByID(session))
         return false;
