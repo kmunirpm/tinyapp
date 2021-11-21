@@ -6,7 +6,7 @@ const generateUserHelpers = (users, urlDatabase) => {
       return [err, code, msg] = [false, 400, "Login required."];
     if (urlDatabase[urlid].userID !== userId)
       return [err, code, msg] = [false, 407, "Action not allowed."]; 
-      console.log(urlid,userId);
+      //console.log(urlid,userId);
     return [] = [true];
   }
 
@@ -42,7 +42,7 @@ const generateUserHelpers = (users, urlDatabase) => {
     let userDb = {}, url;
     for (let urlId in urlDatabase) {
       url = urlDatabase[urlId];
-      console.log("Filtering: ", url)
+      //console.log("Filtering: ", url)
       if (url.userID === id) {
         userDb[urlId] = urlDatabase[urlId].longURL;
       }
@@ -75,8 +75,9 @@ const generateUserHelpers = (users, urlDatabase) => {
 
 
   const userLoggedIn = (session) => {
-    if(typeof session === "undefined" || session === "")
-      return false;
+    if(typeof session === "undefined" || session == "")
+        return false;
+    console.log('wrong');
     return true;
   }
 
