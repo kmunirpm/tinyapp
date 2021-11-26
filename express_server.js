@@ -53,7 +53,7 @@ app.post("/urls", (req, res) => {
     return res.redirect('/login');
   const randomid = generateRandomString();
   urlDatabase[randomid] = {longURL: req.body.longURL, userID: req.session.user_id};
-  res.redirect('/urls');
+  res.redirect(`/urls/${randomid}`);
 });
 
 //View the page for selected shorturl
@@ -71,8 +71,13 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //Loads the edit page for selected shorturl
 app.get("/urls/:shortURL/edit", (req, res) => {
+  console.log('get /urls/:shortURL/edit');
   if(!userLoggedIn(req.session.user_id))
     return res.redirect('/login');
+  const shortURL = req.params.shortURL;
+  const valUser = validateAction(shortURL,req.session.user_id)
+  if( valUser[0] === false)
+    return res.status(valUser[1]).send(valUser[2]);
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, userId: users[req.session.user_id].email};
   res.render("urls_edit", templateVars);
 });
@@ -81,7 +86,11 @@ app.get("/urls/:shortURL/edit", (req, res) => {
 app.post("/urls/:shortURL/edit", (req, res) => {
   if(!userLoggedIn(req.session.user_id))
     return res.redirect('/login');
-  urlDatabase[req.params.shortURL].longURL = req.body.longURL;
+  const longURL = req.body.longURL;
+  const valUser = validateAction(req.params.shortURL,req.session.user_id)
+  if( valUser[0] === false)
+    return res.status(valUser[1]).send(valUser[2]);
+  urlDatabase[req.params.shortURL].longURL = longURL;
   res.redirect('/urls');
 });
 
@@ -99,7 +108,9 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //Loads the register form
 app.get("/register", (req, res) => {
-  res.render("urls_register");
+  if(!userLoggedIn(req.session.user_id))
+    res.render("urls_register");
+  res.redirect('/urls');
 });
 
 //Submits the register form
@@ -155,4 +166,3 @@ app.get("*", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Tinyapp listening on port ${PORT}!`);
 });
-
