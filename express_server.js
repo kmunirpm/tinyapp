@@ -71,7 +71,6 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //Loads the edit page for selected shorturl
 app.get("/urls/:shortURL/edit", (req, res) => {
-  console.log('get /urls/:shortURL/edit');
   if(!userLoggedIn(req.session.user_id))
     return res.redirect('/login');
   const shortURL = req.params.shortURL;

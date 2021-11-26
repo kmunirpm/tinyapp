@@ -4,7 +4,6 @@ const generateUserHelpers = (users, urlDatabase) => {
 
   //validates users actions
   const validateAction = (urlid, userId) => {
-    console.log(urlid, userId);
     if(typeof userId === "undefined" || userId === "")
       return [err, code, msg] = [false, 400, "Login required."];
     if (typeof urlDatabase[urlid] === "undefined") {
