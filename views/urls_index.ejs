@@ -9,6 +9,7 @@
 <%- include('partials/_header'); %>
 <body>
   <main style="margin: 1em;">
+
     <h3>My URLs</h3>
     <table class="table">
       <thead>
@@ -20,6 +21,7 @@
         </tr>
       </thead>
       <tbody>
+        <% console.log(urls) %>
         <% for(let url in urls) { %>
           <tr>
             <td><a href="/urls/<%= url %>"><%= url %></a></td>
