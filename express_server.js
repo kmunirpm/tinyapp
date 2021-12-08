@@ -154,7 +154,7 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const val = validateCredentialsFields(users, email, password, "login");
-  if (!val[0]) return res.status(val[1]).send(val[2]);
+  if (val[0] === false) return res.status(val[1]).send(val[2]);
 
   req.session.user_id = val.id;
   res.redirect("/urls");
